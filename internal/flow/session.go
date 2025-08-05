@@ -3,9 +3,10 @@ package flow
 import "time"
 
 type Session struct {
-	StartedAt   time.Time
-	EndedAt     time.Time
-	SessionLogs []SessionLog
+	StartedAt time.Time
+	EndedAt   time.Time
+	Logs      []SessionLog
+	Objective string
 }
 
 // Start marks the session as started by setting StartedAt to the current time.
@@ -41,5 +42,5 @@ func (s *Session) DurationInSeconds() int {
 
 // AddSessionLog adds a new log entry to the session logs.
 func (s *Session) AddSessionLog(log string) {
-	s.SessionLogs = append(s.SessionLogs, NewSessionLog(log))
+	s.Logs = append(s.Logs, NewSessionLog(log))
 }

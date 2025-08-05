@@ -1,7 +1,6 @@
 package flow
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
@@ -44,14 +43,12 @@ func TestFlowSessionDurationInSeconds(t *testing.T) {
 	session.Start()
 	time.Sleep(1 * time.Second)
 	durationInSeconds := session.DurationInSeconds()
-	fmt.Println(durationInSeconds)
 	if durationInSeconds < 1 {
 		t.Errorf("Expected duration in seconds to be at least 3, got %d", durationInSeconds)
 	}
 	time.Sleep(1 * time.Second)
 	session.End()
 	durationAfterEndInSeconds := session.DurationInSeconds()
-	fmt.Println(durationAfterEndInSeconds)
 	if durationAfterEndInSeconds <= durationInSeconds {
 		t.Errorf("Expected duration in seconds after ending to be greater than before ending, got %d", durationAfterEndInSeconds)
 	}
@@ -65,16 +62,24 @@ func TestFlowSessionAddLog(t *testing.T) {
 	logMessage := "This is a test log entry"
 	session.AddSessionLog(logMessage)
 
-	if len(session.SessionLogs) == 0 {
+	if len(session.Logs) == 0 {
 		t.Error("Expected session logs to contain at least one entry, but it is empty")
 	}
 
-	if session.SessionLogs[0].Log != logMessage {
-		t.Errorf("Expected first log entry to be '%s', got '%s'", logMessage, session.SessionLogs[0].Log)
+	if session.Logs[0].Log != logMessage {
+		t.Errorf("Expected first log entry to be '%s', got '%s'", logMessage, session.Logs[0].Log)
 	}
 
 	session.End()
-	if len(session.SessionLogs) == 0 {
+	if len(session.Logs) == 0 {
 		t.Error("Expected session logs to still contain entries after ending the session, but it is empty")
+	}
+}
+
+// Test that default session objective is empty
+func TestFlowSessionDefaultObjective(t *testing.T) {
+	session := &Session{}
+	if session.Objective != "" {
+		t.Errorf("Expected default session objective to be empty, got '%s'", session.Objective)
 	}
 }
