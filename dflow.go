@@ -12,10 +12,13 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(commands.EnterCmd)
-	rootCmd.AddCommand(commands.ListCmd)
-	rootCmd.AddCommand(commands.SpaceCmd)
-	rootCmd.AddCommand(commands.ConfigCmd)
+	// Add subcommands to the root command
+	rootCmd.AddCommand(
+		commands.EnterCmd,
+		commands.ListCmd,
+		commands.SpaceCmd,
+		commands.ConfigCmd,
+	)
 }
 
 func main() {
