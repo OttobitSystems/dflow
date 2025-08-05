@@ -3,8 +3,8 @@ package tui
 import (
 	"dflow/internal/flow"
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea/v2"
-	"github.com/charmbracelet/lipgloss/v2"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"time"
 )
 
@@ -21,12 +21,9 @@ type FlowTickCmd time.Time
 
 type EnterModel struct {
 	FlowSession *flow.Session
-	FlowLog     FlowStateLogModel
 }
 
 func (model EnterModel) Init() tea.Cmd {
-	//return tea.ClearScreen
-	//return nil
 	return tea.ClearScreen
 }
 
@@ -34,14 +31,17 @@ func (model EnterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "s", "start":
-			// Start the flow state
-			model.StartFlow()
-			return model, feelItFlow()
-		case "q", "ctrl+c":
+		case "q":
 			return model, tea.Quit
-		default:
-			return model.UpdateFlowState(msg)
+		case "s":
+			if model.FlowSession.IsActive() {
+				// If the flow is already active, end it
+				model.FlowSession.End()
+			} else {
+				// If the flow is not active, start it
+				model.FlowSession.Start()
+			}
+			return model, feelItFlow()
 		}
 	case FlowTickCmd:
 		return model, feelItFlow()
@@ -60,7 +60,14 @@ func (model EnterModel) View() string {
 
 	// Place SomethingChanging in the view
 	view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
-	view += model.FlowLog.View()
+
+	// If the session completed, show the end time
+	if model.FlowSession.IsCompleted() {
+		view += fmt.Sprintf("Flow ended at: %s\n", model.FlowSession.EndedAt.Format(time.RFC1123))
+	} else {
+		view += fmt.Sprintf("Flow started at: %s\n", model.FlowSession.StartedAt.Format(time.RFC1123))
+	}
+
 	view += footerStyle.Render("\nPress 'q' or 'ctrl+c' to quit.\n")
 
 	return view
@@ -68,12 +75,6 @@ func (model EnterModel) View() string {
 
 func (model EnterModel) StartFlow() {
 	model.FlowSession.Start()
-}
-
-func (model EnterModel) UpdateFlowState(msg tea.Msg) (tea.Model, tea.Cmd) {
-	updated, cm := model.FlowLog.Update(msg)
-	model.FlowLog = updated.(FlowStateLogModel)
-	return model, cm
 }
 
 func feelItFlow() tea.Cmd {
