@@ -17,26 +17,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var flowName = "default-flow"
-
 var EnterCmd = &cobra.Command{
 	Use:   "enter",
 	Short: "Enter the DevFlow",
-	RunE:  ExecuteEnter,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return errors.New("too many arguments, expected at most one flow name")
+		}
+		return nil
+	},
+	RunE: ExecuteEnter,
 }
 
 func ExecuteEnter(cmd *cobra.Command, args []string) error {
-	// Logic to handle entering a flow state
-	// This could involve setting up the flow state, initializing resources, etc.
-	// For now, we will just print a message
-
-	// Create a new flow state
-	flowState := &flow.FlowState{FlowName: flowName}
-
-	// Create a new TUI program
-	p := tui.InitProgram(tui.EnterModel{Flow: flowState})
+	// Initialize the TUI with the flow session
+	p := tui.InitProgram(tui.EnterModel{FlowSession: flow.InitSession(setFlowName(args))})
 	if _, err := p.Run(); err != nil {
 		return errors.New("unable to initialize the TUI")
 	}
 	return nil
+}
+
+func setFlowName(args []string) string {
+	if len(args) == 0 {
+		return "default"
+	}
+	return args[0]
 }
