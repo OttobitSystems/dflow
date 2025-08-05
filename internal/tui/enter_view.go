@@ -20,8 +20,8 @@ var (
 type FlowTickCmd time.Time
 
 type EnterModel struct {
-	Flow    *flow.FlowState
-	FlowLog FlowStateLogModel
+	FlowSession *flow.Session
+	FlowLog     FlowStateLogModel
 }
 
 func (model EnterModel) Init() tea.Cmd {
@@ -56,8 +56,10 @@ func (model EnterModel) View() string {
 
 	//view += "Welcome to the Main View!\n"
 
+	view += fmt.Sprintf("You are in the flow state: %s\n", model.FlowSession.FlowName)
+
 	// Place SomethingChanging in the view
-	view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.Flow.CheckDuration())
+	view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
 	view += model.FlowLog.View()
 	view += footerStyle.Render("\nPress 'q' or 'ctrl+c' to quit.\n")
 
@@ -65,7 +67,7 @@ func (model EnterModel) View() string {
 }
 
 func (model EnterModel) StartFlow() {
-	model.Flow.Start()
+	model.FlowSession.Start()
 }
 
 func (model EnterModel) UpdateFlowState(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -75,7 +77,7 @@ func (model EnterModel) UpdateFlowState(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func feelItFlow() tea.Cmd {
-	return tea.Tick(5*time.Second, func(t time.Time) tea.Msg {
+	return tea.Tick(1*time.Second, func(t time.Time) tea.Msg {
 		return FlowTickCmd(t)
 	})
 }
