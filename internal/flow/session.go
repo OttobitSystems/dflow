@@ -3,10 +3,15 @@ package flow
 import "time"
 
 type Session struct {
+	FlowName  string
 	StartedAt time.Time
 	EndedAt   time.Time
 	Logs      []SessionLog
 	Objective string
+}
+
+func InitSession(flowName string) *Session {
+	return &Session{FlowName: flowName}
 }
 
 // Start marks the session as started by setting StartedAt to the current time.
@@ -37,6 +42,9 @@ func (s *Session) Duration() time.Duration {
 
 // The DurationInSeconds returns Duration as integer seconds.
 func (s *Session) DurationInSeconds() int {
+	if !s.IsActive() {
+		return 0
+	}
 	return int(s.Duration().Seconds())
 }
 
