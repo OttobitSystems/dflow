@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var EnterCmd = &cobra.Command{
+var Enter = &cobra.Command{
 	Use:   "enter",
 	Short: "Enter the DevFlow",
 	Args: func(cmd *cobra.Command, args []string) error {
