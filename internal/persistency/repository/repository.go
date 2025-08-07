@@ -1,3 +1,4 @@
+// Package repository: is all functionality to work with database
 package repository
 
 import (
@@ -49,8 +50,8 @@ func CreateFlow(name string) (bool, error) {
 
 func InitSession(flowName string) (string, error) {
 	newSection := models.Session{
-		Id:     uuid.New().String(),
-		FlowId: flowName,
+		ID:     uuid.New().String(),
+		FlowID: flowName,
 	}
 
 	var flows []models.Flow
@@ -63,13 +64,13 @@ func InitSession(flowName string) (string, error) {
 
 	_ = DBInstance.Create(&newSection)
 
-	return newSection.Id, nil
+	return newSection.ID, nil
 }
 
 func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 	var sessions []models.Session
 
-	_ = DBInstance.First(&sessions, `Id = "`+InDatabaseID+`"`)
+	_ = DBInstance.First(&sessions, `ID = "`+InDatabaseID+`"`)
 
 	if len(sessions) == 0 {
 		return fmt.Errorf("session id not found")
@@ -79,7 +80,25 @@ func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 
 	session.StartedAt = StartedAt
 
-	DBInstance.Model(&session).Where(`Id = "`+InDatabaseID+`"`).Update("StartedAt", StartedAt)
+	DBInstance.Model(&session).Where(`ID = "`+InDatabaseID+`"`).Update("StartedAt", StartedAt)
+
+	return nil
+}
+
+func NotifySessionEnd(InDatabaseID string, CompletedAt time.Time) error {
+	var sessions []models.Session
+
+	_ = DBInstance.First(&sessions, `ID = "`+InDatabaseID+`"`)
+
+	if len(sessions) == 0 {
+		return fmt.Errorf("session id not found")
+	}
+
+	session := sessions[0]
+
+	session.CompletedAt = CompletedAt
+
+	DBInstance.Model(&session).Where(`ID = "`+InDatabaseID+`"`).Update("CompletedAt", CompletedAt)
 
 	return nil
 }
@@ -87,16 +106,16 @@ func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 func GetAllLastLogs(SessionID string, FlowID string) []models.Log {
 	var logs []models.Log
 
-	_ = DBInstance.Order("time_stamp desc").Limit(10).Find(&logs, &models.Log{FlowId: FlowID, SessionId: SessionID})
+	_ = DBInstance.Order("time_stamp desc").Limit(10).Find(&logs, &models.Log{FlowID: FlowID, SessionID: SessionID})
 
 	return logs
 }
 
 func StoreLog(SessionID string, FlowID string, logText string) error {
 	messageToLog := models.Log{
-		Id:        uuid.New().String(),
-		FlowId:    FlowID,
-		SessionId: SessionID,
+		ID:        uuid.New().String(),
+		FlowID:    FlowID,
+		SessionID: SessionID,
 		TimeStamp: time.Now(),
 		Log:       logText,
 	}

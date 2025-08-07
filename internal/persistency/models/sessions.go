@@ -3,14 +3,14 @@ package models
 import "time"
 
 type Session struct {
-	Id          string
+	ID          string
 	StartedAt   time.Time
 	CompletedAt time.Time
 
 	// === RELATIONS ===
-	FlowId string
+	FlowID string
 
-	Flow Flow `gorm:"foreignKey:FlowId;references:Name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Flow Flow `gorm:"foreignKey:FlowID;references:Name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	Logs []Log `gorm:"foreignKey:SessionId;"`
+	Logs []Log `gorm:"foreignKey:SessionID;"`
 }

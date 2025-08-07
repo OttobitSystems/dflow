@@ -3,15 +3,15 @@ package models
 import "time"
 
 type Log struct {
-	Id        string
+	ID        string
 	TimeStamp time.Time
 	Log       string
 
 	// === RELATIONS ===
 
-	SessionId string
-	FlowId    string
+	SessionID string
+	FlowID    string
 
-	Flow    Flow    `gorm:"foreignKey:FlowId;references:Name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Session Session `gorm:"foreignKey:SessionId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Flow    Flow    `gorm:"foreignKey:FlowID;references:Name;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Session Session `gorm:"foreignKey:SessionID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

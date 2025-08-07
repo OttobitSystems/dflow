@@ -1,3 +1,4 @@
+// Package flow: all data structures to work with flows
 package flow
 
 import (
@@ -41,6 +42,7 @@ func (s *Session) Start() {
 // End marks the session as ended by setting EndedAt to the current time.
 func (s *Session) End() {
 	s.EndedAt = time.Now()
+	repository.NotifySessionEnd(s.InDatabaseID, s.EndedAt)
 }
 
 // IsActive checks if the session is currently active.
@@ -59,7 +61,7 @@ func (s *Session) Duration() time.Duration {
 	return s.EndedAt.Sub(s.StartedAt)
 }
 
-// The DurationInSeconds returns Duration as integer seconds.
+// DurationInSeconds returns Duration as integer seconds.
 func (s *Session) DurationInSeconds() int {
 	if s.StartedAt.IsZero() {
 		return 0 // Session has not started

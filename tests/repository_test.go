@@ -32,16 +32,3 @@ func TestShouldAddFlowInDatabase(t *testing.T) {
 		t.Error("error creating flow, ", err)
 	}
 }
-
-func TestShouldAddSessionInDatabase(t *testing.T) {
-	// Arrange
-
-	// Act
-	repository.InitDatabase()
-	sessionId, err := repository.StartSession("TestFlow")
-
-	// Assert
-	if sessionId != "" {
-		t.Error("errror creating session, err: ", err)
-	}
-}

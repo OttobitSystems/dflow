@@ -1,3 +1,4 @@
+// Package commands: Terminal UI commands
 package commands
 
 import "github.com/spf13/cobra"

@@ -1,3 +1,4 @@
+// Package tui: terminal user interface
 package tui
 
 import (
@@ -11,13 +12,7 @@ import (
 )
 
 var (
-	durationStyle = lipgloss.NewStyle().
-			Bold(true).
-			Foreground(lipgloss.Color("205"))
-	footerStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("241")).
-			Italic(true)
-	footerV2Style         = lipgloss.NewStyle().Background(lipgloss.Color("#000000")).Width(100)
+	footerStyle           = lipgloss.NewStyle().Background(lipgloss.Color("#000000")).Width(100)
 	footerLeftContainer   = lipgloss.NewStyle().Background(lipgloss.Color("#7D56F4")).Width(33).Align(lipgloss.Left).Foreground(lipgloss.Color("#FAFAFA"))
 	footerCenterContainer = lipgloss.NewStyle().Background(lipgloss.Color("#3C3C3C")).Width(13).Align(lipgloss.Center)
 	footerRightContainer  = lipgloss.NewStyle().Background(lipgloss.Color("#D75FEE")).Width(54).Align(lipgloss.Right).Foreground(lipgloss.Color("#FAFAFA"))
@@ -75,21 +70,10 @@ func (model EnterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (model EnterModel) View() string {
 	var view string
 
-	// view += "Welcome to the Main View!\n"
+	view += "Welcome into your flow!\n"
 
-	// view += fmt.Sprintf("You are in the flow state: %s\n", model.FlowSession.FlowName)
-
-	// Place SomethingChanging in the view
-	// view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
-
-	// If the session completed, show the end time
-	/*
-		if model.FlowSession.IsCompleted() {
-			view += fmt.Sprintf("Flow ended at: %s\n", model.FlowSession.EndedAt.Format(time.RFC1123))
-		} else {
-			view += fmt.Sprintf("Flow started at: %s\n", model.FlowSession.StartedAt.Format(time.RFC1123))
-		}
-	*/
+	view += "Press `Ctrl+c` to exit\n"
+	view += "Enjoy!\n\n"
 
 	view += lipgloss.JoinHorizontal(lipgloss.Top, RenderLeftContainer(model), RenderRightContainer(model))
 
@@ -137,7 +121,7 @@ func RenderFooter(model EnterModel) string {
 	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))
 
 	view += spacing
-	view += footerV2Style.Render(footerRow)
+	view += footerStyle.Render(footerRow)
 
 	return view
 }
