@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -22,10 +23,22 @@ var (
 	footerRightContainer  = lipgloss.NewStyle().Background(lipgloss.Color("#D75FEE")).Width(54).Align(lipgloss.Right).Foreground(lipgloss.Color("#FAFAFA"))
 )
 
+var (
+	leftPanelStyle = lipgloss.NewStyle().
+			Border(lipgloss.NormalBorder(), false, true, false, false). // Bordo solo a destra
+			BorderForeground(lipgloss.Color("63")).
+			Padding(1, 2).
+			Width(60)
+
+	rightPanelStyle = lipgloss.NewStyle().
+			Padding(1, 2)
+)
+
 type FlowTickCmd time.Time
 
 type EnterModel struct {
 	FlowSession *flow.Session
+	InputLog    textinput.Model
 }
 
 func (model EnterModel) Init() tea.Cmd {
@@ -35,14 +48,23 @@ func (model EnterModel) Init() tea.Cmd {
 func (model EnterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "q":
-		case "ctrl+c":
+		switch msg.Type {
+		case tea.KeyCtrlC:
 			if model.FlowSession.IsActive() {
-				// If the flow is already active, end it
 				model.FlowSession.End()
 			}
 			return model, tea.Quit
+		case tea.KeyEnter:
+			model.FlowSession.StoreLog(model.InputLog.Value())
+
+			model.InputLog.Reset()
+
+			return model, nil
+		default:
+			var command tea.Cmd
+			model.InputLog, command = model.InputLog.Update(msg)
+
+			return model, command
 		}
 	}
 
@@ -55,29 +77,24 @@ func (model EnterModel) View() string {
 
 	// view += "Welcome to the Main View!\n"
 
-	view += fmt.Sprintf("You are in the flow state: %s\n", model.FlowSession.FlowName)
+	// view += fmt.Sprintf("You are in the flow state: %s\n", model.FlowSession.FlowName)
 
 	// Place SomethingChanging in the view
 	// view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
 
 	// If the session completed, show the end time
-	if model.FlowSession.IsCompleted() {
-		view += fmt.Sprintf("Flow ended at: %s\n", model.FlowSession.EndedAt.Format(time.RFC1123))
-	} else {
-		view += fmt.Sprintf("Flow started at: %s\n", model.FlowSession.StartedAt.Format(time.RFC1123))
-	}
+	/*
+		if model.FlowSession.IsCompleted() {
+			view += fmt.Sprintf("Flow ended at: %s\n", model.FlowSession.EndedAt.Format(time.RFC1123))
+		} else {
+			view += fmt.Sprintf("Flow started at: %s\n", model.FlowSession.StartedAt.Format(time.RFC1123))
+		}
+	*/
 
-	leftInfo := fmt.Sprintf("%s > %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
-	centerInfo := ""
-	rightInfo := fmt.Sprintf("Duration: %s | Keep working!", model.FlowSession.DurationString())
+	view += lipgloss.JoinHorizontal(lipgloss.Top, RenderLeftContainer(model), RenderRightContainer(model))
 
-	// view += footerStyle.Render("\nPress 'q' or 'ctrl+c' to quit.\n")
-
-	spacing := "\n\n\n\n\n"
-	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))
-
-	view += spacing
-	view += footerV2Style.Render(footerRow)
+	// ====== FOOTER ========
+	view += RenderFooter(model)
 
 	return view
 }
@@ -90,4 +107,36 @@ func feelItFlow() tea.Cmd {
 	return tea.Tick(1*time.Second, func(t time.Time) tea.Msg {
 		return FlowTickCmd(t)
 	})
+}
+
+func RenderLeftContainer(model EnterModel) string {
+	var view string
+
+	view = "Pannello di sinistra\n"
+	view += " - Item1\n"
+	view += " - Item2\n"
+	view += " - Item3\n"
+	view += " - Item4\n"
+
+	return leftPanelStyle.Render(view)
+}
+
+func RenderRightContainer(model EnterModel) string {
+	return rightPanelStyle.Render(model.InputLog.View())
+}
+
+func RenderFooter(model EnterModel) string {
+	var view string
+
+	leftInfo := fmt.Sprintf("%s > %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
+	centerInfo := ""
+	rightInfo := fmt.Sprintf("Duration: %s | Keep working!", model.FlowSession.DurationString())
+
+	spacing := "\n\n\n\n\n"
+	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))
+
+	view += spacing
+	view += footerV2Style.Render(footerRow)
+
+	return view
 }

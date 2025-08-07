@@ -82,3 +82,7 @@ func (s *Session) AddSessionLog(log string) {
 func (s *Session) IsCompleted() bool {
 	return !s.StartedAt.IsZero() && !s.EndedAt.IsZero()
 }
+
+func (s *Session) StoreLog(logText string) {
+	repository.StoreLog(s.InDatabaseID, s.FlowName, logText)
+}

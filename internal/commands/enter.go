@@ -15,6 +15,7 @@ import (
 	"dflow/internal/tui"
 	"errors"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/spf13/cobra"
 )
 
@@ -32,11 +33,24 @@ var Enter = &cobra.Command{
 
 func ExecuteEnter(cmd *cobra.Command, args []string) error {
 	// Initialize the TUI with the flow session
-	p := tui.InitProgram(tui.EnterModel{FlowSession: flow.InitSession(setFlowName(args))})
+	p := tui.InitProgram(tui.EnterModel{
+		FlowSession: flow.InitSession(setFlowName(args)),
+		InputLog:    CreateInputLog(),
+	})
 	if _, err := p.Run(); err != nil {
 		return errors.New("unable to initialize the TUI")
 	}
 	return nil
+}
+
+func CreateInputLog() textinput.Model {
+	input := textinput.New()
+	input.Placeholder = "Write your log here..."
+	input.Focus()
+	input.CharLimit = 150
+	input.Width = 40
+
+	return input
 }
 
 func setFlowName(args []string) string {

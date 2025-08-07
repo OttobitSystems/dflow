@@ -83,3 +83,17 @@ func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 
 	return nil
 }
+
+func StoreLog(SessionId string, FlowId string, logText string) error {
+	messageToLog := models.Log{
+		Id:        uuid.New().String(),
+		FlowId:    FlowId,
+		SessionId: SessionId,
+		TimeStamp: time.Now(),
+		Log:       logText,
+	}
+
+	DBInstance.Create(messageToLog)
+
+	return nil
+}
