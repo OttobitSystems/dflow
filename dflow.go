@@ -2,8 +2,10 @@ package main
 
 import (
 	"dflow/internal/commands"
-	"github.com/spf13/cobra"
+	"dflow/internal/persistency/repository"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -22,6 +24,8 @@ func init() {
 }
 
 func main() {
+	repository.InitDatabase()
+
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
