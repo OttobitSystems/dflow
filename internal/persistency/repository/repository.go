@@ -24,11 +24,11 @@ func InitDatabase() (bool, error) {
 
 	var flows []models.Flow
 
-	_ = DBInstance.Find(&flows, `Name = "Default"`)
+	_ = DBInstance.Find(&flows, `Name = "default"`)
 
 	if len(flows) == 0 {
-		CreateFlow("Default")
-		fmt.Println("Default flow created!")
+		CreateFlow("default")
+		fmt.Println("`default` flow created!")
 	}
 
 	result = true
@@ -47,14 +47,39 @@ func CreateFlow(name string) (bool, error) {
 	return (status != nil), status.Error
 }
 
-func StartSession(flowName string) (string, error) {
+func InitSession(flowName string) (string, error) {
 	newSection := models.Session{
-		Id:        uuid.New().String(),
-		FlowId:    flowName,
-		StartedAt: time.Now().UTC(),
+		Id:     uuid.New().String(),
+		FlowId: flowName,
 	}
 
-	status := DBInstance.Create(&newSection)
+	var flows []models.Flow
 
-	return newSection.Id, status.Error
+	_ = DBInstance.First(&flows, `Name = "`+flowName+`"`)
+
+	if len(flows) == 0 {
+		return "", fmt.Errorf("FlowId not found")
+	}
+
+	_ = DBInstance.Create(&newSection)
+
+	return newSection.Id, nil
+}
+
+func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
+	var sessions []models.Session
+
+	_ = DBInstance.First(&sessions, `Id = "`+InDatabaseID+`"`)
+
+	if len(sessions) == 0 {
+		return fmt.Errorf("session id not found")
+	}
+
+	session := sessions[0]
+
+	session.StartedAt = StartedAt
+
+	DBInstance.Model(&session).Where(`Id = "`+InDatabaseID+`"`).Update("StartedAt", StartedAt)
+
+	return nil
 }

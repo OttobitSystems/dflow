@@ -1,17 +1,30 @@
 package flow
 
-import "time"
+import (
+	"dflow/internal/persistency/repository"
+	"fmt"
+	"time"
+)
 
 type Session struct {
-	FlowName  string
-	StartedAt time.Time
-	EndedAt   time.Time
-	Logs      []SessionLog
-	Objective string
+	FlowName     string
+	StartedAt    time.Time
+	EndedAt      time.Time
+	Logs         []SessionLog
+	Objective    string
+	InDatabaseID string
 }
 
 func InitSession(flowName string) *Session {
-	return &Session{FlowName: flowName}
+	flowDBID, err := repository.InitSession(flowName)
+	if err != nil {
+		panic("flow not found!")
+	}
+
+	session := &Session{FlowName: flowName, InDatabaseID: flowDBID}
+	session.Start()
+
+	return session
 }
 
 // Start marks the session as started by setting StartedAt to the current time.
@@ -20,6 +33,8 @@ func (s *Session) Start() {
 		return // Session has already started
 	}
 	s.StartedAt = time.Now()
+
+	repository.NotifySessionStarted(s.InDatabaseID, s.StartedAt)
 }
 
 // End marks the session as ended by setting EndedAt to the current time.
@@ -49,6 +64,13 @@ func (s *Session) DurationInSeconds() int {
 		return 0 // Session has not started
 	}
 	return int(s.Duration().Seconds())
+}
+
+func (s *Session) DurationString() string {
+	if s.StartedAt.IsZero() {
+		return "--:--:--" // Session has not started
+	}
+	return fmt.Sprintf("%02d h %02d m %02d s", int(s.Duration().Hours()), int(s.Duration().Minutes()), int(s.Duration().Seconds()))
 }
 
 // AddSessionLog adds a new log entry to the session logs.

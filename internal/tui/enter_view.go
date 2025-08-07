@@ -3,9 +3,10 @@ package tui
 import (
 	"dflow/internal/flow"
 	"fmt"
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"time"
 )
 
 var (
@@ -15,6 +16,10 @@ var (
 	footerStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("241")).
 			Italic(true)
+	footerV2Style         = lipgloss.NewStyle().Background(lipgloss.Color("#000000")).Width(100)
+	footerLeftContainer   = lipgloss.NewStyle().Background(lipgloss.Color("#7D56F4")).Width(33).Align(lipgloss.Left).Foreground(lipgloss.Color("#FAFAFA"))
+	footerCenterContainer = lipgloss.NewStyle().Background(lipgloss.Color("#3C3C3C")).Width(13).Align(lipgloss.Center)
+	footerRightContainer  = lipgloss.NewStyle().Background(lipgloss.Color("#D75FEE")).Width(54).Align(lipgloss.Right).Foreground(lipgloss.Color("#FAFAFA"))
 )
 
 type FlowTickCmd time.Time
@@ -32,34 +37,28 @@ func (model EnterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q":
-			return model, tea.Quit
-		case "s":
+		case "ctrl+c":
 			if model.FlowSession.IsActive() {
 				// If the flow is already active, end it
 				model.FlowSession.End()
-			} else {
-				// If the flow is not active, start it
-				model.FlowSession.Start()
 			}
-			return model, feelItFlow()
+			return model, tea.Quit
 		}
-	case FlowTickCmd:
-		return model, feelItFlow()
 	}
 
 	// Update logic can go here
-	return model, nil
+	return model, feelItFlow()
 }
 
 func (model EnterModel) View() string {
 	var view string
 
-	//view += "Welcome to the Main View!\n"
+	// view += "Welcome to the Main View!\n"
 
 	view += fmt.Sprintf("You are in the flow state: %s\n", model.FlowSession.FlowName)
 
 	// Place SomethingChanging in the view
-	view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
+	// view += fmt.Sprintf(durationStyle.Render("Duration: %d \n"), model.FlowSession.DurationInSeconds())
 
 	// If the session completed, show the end time
 	if model.FlowSession.IsCompleted() {
@@ -68,7 +67,17 @@ func (model EnterModel) View() string {
 		view += fmt.Sprintf("Flow started at: %s\n", model.FlowSession.StartedAt.Format(time.RFC1123))
 	}
 
-	view += footerStyle.Render("\nPress 'q' or 'ctrl+c' to quit.\n")
+	leftInfo := fmt.Sprintf("%s > %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
+	centerInfo := ""
+	rightInfo := fmt.Sprintf("Duration: %s | Keep working!", model.FlowSession.DurationString())
+
+	// view += footerStyle.Render("\nPress 'q' or 'ctrl+c' to quit.\n")
+
+	spacing := "\n\n\n\n\n"
+	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))
+
+	view += spacing
+	view += footerV2Style.Render(footerRow)
 
 	return view
 }
