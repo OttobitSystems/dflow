@@ -112,11 +112,12 @@ func feelItFlow() tea.Cmd {
 func RenderLeftContainer(model EnterModel) string {
 	var view string
 
-	view = "Pannello di sinistra\n"
-	view += " - Item1\n"
-	view += " - Item2\n"
-	view += " - Item3\n"
-	view += " - Item4\n"
+	view = "Logs:\n"
+	logs := model.FlowSession.GetLogs()
+
+	for _, entry := range logs {
+		view += fmt.Sprintf("> %s\n", entry.Log)
+	}
 
 	return leftPanelStyle.Render(view)
 }

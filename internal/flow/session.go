@@ -1,6 +1,7 @@
 package flow
 
 import (
+	"dflow/internal/persistency/models"
 	"dflow/internal/persistency/repository"
 	"fmt"
 	"time"
@@ -85,4 +86,8 @@ func (s *Session) IsCompleted() bool {
 
 func (s *Session) StoreLog(logText string) {
 	repository.StoreLog(s.InDatabaseID, s.FlowName, logText)
+}
+
+func (s *Session) GetLogs() []models.Log {
+	return repository.GetAllLastLogs(s.InDatabaseID, s.FlowName)
 }

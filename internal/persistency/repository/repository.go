@@ -84,11 +84,19 @@ func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 	return nil
 }
 
-func StoreLog(SessionId string, FlowId string, logText string) error {
+func GetAllLastLogs(SessionID string, FlowID string) []models.Log {
+	var logs []models.Log
+
+	_ = DBInstance.Order("time_stamp desc").Limit(10).Find(&logs, &models.Log{FlowId: FlowID, SessionId: SessionID})
+
+	return logs
+}
+
+func StoreLog(SessionID string, FlowID string, logText string) error {
 	messageToLog := models.Log{
 		Id:        uuid.New().String(),
-		FlowId:    FlowId,
-		SessionId: SessionId,
+		FlowId:    FlowID,
+		SessionId: SessionID,
 		TimeStamp: time.Now(),
 		Log:       logText,
 	}

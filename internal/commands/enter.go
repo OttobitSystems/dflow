@@ -45,7 +45,7 @@ func ExecuteEnter(cmd *cobra.Command, args []string) error {
 
 func CreateInputLog() textinput.Model {
 	input := textinput.New()
-	input.Placeholder = "Write your log here..."
+	input.Placeholder = "Write your log here, press enter to store it!"
 	input.Focus()
 	input.CharLimit = 150
 	input.Width = 40
