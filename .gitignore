@@ -1,2 +1,4 @@
 dflow.db
 dflow
+# Added by goreleaser init:
+dist/
