@@ -19,7 +19,7 @@ var CreateFlowCommand = &cobra.Command{
 }
 
 var GetFlowsCommand = &cobra.Command{
-	Use:   "flow",
+	Use:   "flows",
 	Short: "Gets each flow names in configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		flows := repository.GetFlows()
