@@ -48,6 +48,13 @@ func CreateFlow(name string) (bool, error) {
 	return (status != nil), status.Error
 }
 
+func GetFlows() []models.Flow {
+	var flows []models.Flow
+	_ = DBInstance.Find(&flows)
+
+	return flows
+}
+
 func InitSession(flowName string) (string, error) {
 	newSection := models.Session{
 		ID:     uuid.New().String(),
