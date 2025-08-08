@@ -12,9 +12,14 @@ var Logs = &cobra.Command{
 	Short: "List all logs available for flow (flow-name, if no args application uses default one)",
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		logs := repository.GetLogs("default")
+		flow := repository.ApplicationConfiguration.DefaultFlow
+		if len(args) == 1 {
+			flow = args[0]
+		}
 
-		outputString := "\nFlow Name: default\n"
+		logs := repository.GetLogs(flow)
+
+		outputString := fmt.Sprintf("\nFlow Name: %s\n", flow)
 		sessionID := ""
 
 		for _, entry := range logs {

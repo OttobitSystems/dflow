@@ -12,6 +12,7 @@ package commands
 
 import (
 	"dflow/internal/flow"
+	"dflow/internal/persistency/repository"
 	"dflow/internal/tui"
 	"errors"
 
@@ -55,7 +56,7 @@ func CreateInputLog() textinput.Model {
 
 func setFlowName(args []string) string {
 	if len(args) == 0 {
-		return "default"
+		return repository.ApplicationConfiguration.DefaultFlow
 	}
 	return args[0]
 }

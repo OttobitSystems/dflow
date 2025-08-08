@@ -12,7 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-var DBInstance *gorm.DB = nil
+var (
+	DBInstance               *gorm.DB = nil
+	ApplicationConfiguration          = &models.ApplicationConfiguration{
+		DefaultFlow: "default",
+	}
+)
 
 const SQLCONNECTIONSTRING = "dflow.db?cache=shared&foreign_keys=1"
 
@@ -20,16 +25,30 @@ func InitDatabase() (bool, error) {
 	var err error
 	result := false
 	DBInstance, err = gorm.Open(sqlite.Open(SQLCONNECTIONSTRING), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
 
-	DBInstance.AutoMigrate(&models.Flow{}, &models.Session{}, &models.Log{})
+	DBInstance.AutoMigrate(&models.Flow{}, &models.Session{}, &models.Log{}, &models.ApplicationConfiguration{})
 
 	var flows []models.Flow
+	var configurations []models.ApplicationConfiguration
 
-	_ = DBInstance.Find(&flows, `Name = "default"`)
+	configResult := DBInstance.First(&configurations)
+
+	if configResult.Error != nil {
+		DBInstance.Create(ApplicationConfiguration)
+	}
+
+	if configResult.Error == nil {
+		ApplicationConfiguration = &configurations[0]
+	}
+
+	_ = DBInstance.Find(&flows, `Name = "`+ApplicationConfiguration.DefaultFlow+`"`)
 
 	if len(flows) == 0 {
-		CreateFlow("default")
-		fmt.Println("`default` flow created!")
+		CreateFlow(ApplicationConfiguration.DefaultFlow)
+		fmt.Println("`" + ApplicationConfiguration.DefaultFlow + "` flow created!")
 	}
 
 	result = true
