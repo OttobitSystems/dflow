@@ -17,8 +17,7 @@ func init() {
 	commands.ConfigSet.AddCommand(commands.CreateFlowCommand)
 	commands.Config.AddCommand(commands.ConfigSet)
 
-	commands.ConfigGet.AddCommand(commands.GetFlowsCommand)
-	commands.Config.AddCommand(commands.ConfigGet)
+	commands.List.AddCommand(commands.GetFlowsCommand)
 
 	// Add subcommands to the root command
 	rootCmd.AddCommand(
