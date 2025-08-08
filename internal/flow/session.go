@@ -73,7 +73,7 @@ func (s *Session) DurationString() string {
 	if s.StartedAt.IsZero() {
 		return "--:--:--" // Session has not started
 	}
-	return fmt.Sprintf("%02d h %02d m %02d s", int(s.Duration().Hours()), int(s.Duration().Minutes()), int(s.Duration().Seconds()))
+	return fmt.Sprintf("%02d h %02d m %02d s", int(int(s.Duration().Seconds())/3600), int(int(s.Duration().Seconds())%3600/60), int(s.Duration().Seconds())%60)
 }
 
 // AddSessionLog adds a new log entry to the session logs.
