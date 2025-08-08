@@ -15,6 +15,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	commands.ConfigSet.AddCommand(commands.CreateFlowCommand)
+	commands.ConfigSet.AddCommand(commands.SetDefaultFlow)
 	commands.Config.AddCommand(commands.ConfigSet)
 
 	// Add subcommands to the root command

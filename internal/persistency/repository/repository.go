@@ -165,3 +165,8 @@ func StoreLog(SessionID string, FlowID string, logText string) error {
 
 	return nil
 }
+
+func UpdateDefaultFlowName(DefaultFlowName string) {
+	var configurations []models.ApplicationConfiguration
+	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("DefaultFlow", DefaultFlowName)
+}
