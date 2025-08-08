@@ -24,6 +24,7 @@ func init() {
 		commands.Space,
 		commands.Config,
 		commands.Logs,
+		commands.Recap,
 	)
 }
 

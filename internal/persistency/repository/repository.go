@@ -55,6 +55,13 @@ func GetFlows() []models.Flow {
 	return flows
 }
 
+func GetFlowsAndSessions() []models.Flow {
+	var flows []models.Flow
+	_ = DBInstance.Preload("Sessions").Find(&flows)
+
+	return flows
+}
+
 func InitSession(flowName string) (string, error) {
 	newSection := models.Session{
 		ID:     uuid.New().String(),
