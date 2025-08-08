@@ -26,10 +26,10 @@ var Recap = &cobra.Command{
 		recap := recap.Calculate()
 
 		columns := []table.Column{
-			{"Name", 35},
-			{"Last enter", 35},
-			{"Time in flow", 35},
-			{"Flowspace", 35},
+			{"Name", 20},
+			{"Last enter", 20},
+			{"Time in flow", 20},
+			{"Flowspace", 20},
 		}
 
 		rows := make([]table.Row, len(recap.FlowsRecap))
