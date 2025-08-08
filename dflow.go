@@ -23,6 +23,7 @@ func init() {
 		commands.List,
 		commands.Space,
 		commands.Config,
+		commands.Logs,
 	)
 }
 

@@ -118,6 +118,14 @@ func GetAllLastLogs(SessionID string, FlowID string) []models.Log {
 	return logs
 }
 
+func GetLogs(FlowID string) []models.Log {
+	var logs []models.Log
+
+	_ = DBInstance.Order("time_stamp desc").Preload("Session").Find(&logs, &models.Log{FlowID: FlowID})
+
+	return logs
+}
+
 func StoreLog(SessionID string, FlowID string, logText string) error {
 	messageToLog := models.Log{
 		ID:        uuid.New().String(),
