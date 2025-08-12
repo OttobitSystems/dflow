@@ -58,6 +58,9 @@ homebrew_casks:
   - name: "dflow"
     description: "Manage your daily development flow with ease."
     homepage: "https://github.com/ottobitsystems/dflow"
+    repository:
+      owner: "ottobitsystems"
+      name: "dflow"
     hooks:
       post:
         install: |
