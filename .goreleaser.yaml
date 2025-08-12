@@ -52,19 +52,3 @@ release:
     ---
 
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
-
-
-homebrew_casks:
-  - name: "dflow"
-    description: "Manage your daily development flow with ease."
-    homepage: "https://github.com/ottobitsystems/dflow"
-    repository:
-      owner: "ottobitsystems"
-      name: "dflow"
-    hooks:
-      post:
-        install: |
-          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
-            # replace 'foo' with the actual binary name
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/dflow"]
-          end
