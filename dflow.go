@@ -1,6 +1,7 @@
 package main
 
 import (
+	auth "dflow/internal/cloud"
 	"dflow/internal/commands"
 	"dflow/internal/persistency/repository"
 	"os"
@@ -26,10 +27,12 @@ func init() {
 		commands.Config,
 		commands.Logs,
 		commands.Recap,
+		commands.Auth,
 	)
 }
 
 func main() {
+	auth.RefreshSession()
 	repository.InitDatabase()
 
 	if err := rootCmd.Execute(); err != nil {
