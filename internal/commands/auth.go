@@ -1,7 +1,7 @@
 package commands
 
 import (
-	auth "dflow/internal/cloud"
+	auth "dflow/internal/cloud/auth"
 
 	"github.com/spf13/cobra"
 )

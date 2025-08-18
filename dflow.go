@@ -1,7 +1,7 @@
 package main
 
 import (
-	auth "dflow/internal/cloud"
+	auth "dflow/internal/cloud/auth"
 	"dflow/internal/commands"
 	"dflow/internal/persistency/repository"
 	"os"
