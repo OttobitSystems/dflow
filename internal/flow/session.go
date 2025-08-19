@@ -17,13 +17,13 @@ type Session struct {
 	InDatabaseID string
 }
 
-func InitSession(flowName string) *Session {
+func InitSession(flowName string, objective string) *Session {
 	flowDBID, err := repository.InitSession(flowName)
 	if err != nil {
 		panic("flow not found!")
 	}
 
-	session := &Session{FlowName: flowName, InDatabaseID: flowDBID}
+	session := &Session{FlowName: flowName, InDatabaseID: flowDBID, Objective: objective}
 	session.Start()
 
 	return session

@@ -15,6 +15,12 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	commands.Enter.Flags().StringVarP(&commands.Objective, "objective", "o", "It's a good day today", "Flow objective")
+
+	commands.Config.AddCommand(commands.SetDefaultFlow)
+	commands.Space.AddCommand(commands.SpaceJoin)
+	commands.Space.AddCommand(commands.CreateSpace)
+
 	// Add subcommands to the root command
 	rootCmd.AddCommand(
 		commands.Enter,

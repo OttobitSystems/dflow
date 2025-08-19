@@ -115,7 +115,7 @@ func RenderFooter(model EnterModel) string {
 
 	leftInfo := fmt.Sprintf("%s > %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
 	centerInfo := ""
-	rightInfo := fmt.Sprintf("Duration: %s | Keep working!", model.FlowSession.DurationString())
+	rightInfo := fmt.Sprintf("Duration: %s | %s", model.FlowSession.DurationString(), model.FlowSession.Objective)
 
 	spacing := "\n\n\n\n\n"
 	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))

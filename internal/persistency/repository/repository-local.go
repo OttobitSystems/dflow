@@ -186,3 +186,13 @@ func UpdateDefaultFlowName(DefaultFlowName string) {
 	var configurations []models.ApplicationConfiguration
 	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("DefaultFlow", DefaultFlowName)
 }
+
+func UpdateClientID(ClientID string) {
+	var configurations []models.ApplicationConfiguration
+	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("client_id", ClientID)
+}
+
+func UpdateSpaceID(SpaceID string) {
+	var configurations []models.ApplicationConfiguration
+	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("joined_space", SpaceID)
+}

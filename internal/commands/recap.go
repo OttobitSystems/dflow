@@ -13,16 +13,6 @@ var Recap = &cobra.Command{
 	Use:   "recap",
 	Short: "Shows a recap of work flows",
 	Run: func(cmd *cobra.Command, args []string) {
-		/*
-			fmt.Println(recap.Calculate())
-
-			fmt.Println("NAME\t\t\tLAST ENTER\t\t\tTIME IN FLOW\t\t\tFLOWSPACE")
-			for _, entry := range recap.Calculate().FlowsRecap {
-				fmt.Printf("%s\t\t\t%s\t\t\t%s\t\t\t\n", entry.Name, entry.LastEnter, entry.TimeInFlow)
-			}
-
-		*/
-
 		recap := recap.Calculate()
 
 		columns := []table.Column{

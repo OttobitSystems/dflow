@@ -15,10 +15,13 @@ import (
 	"dflow/internal/persistency/repository"
 	"dflow/internal/tui"
 	"errors"
+	"fmt"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/spf13/cobra"
 )
+
+var Objective string
 
 var Enter = &cobra.Command{
 	Use:   "enter",
@@ -33,9 +36,13 @@ var Enter = &cobra.Command{
 }
 
 func ExecuteEnter(cmd *cobra.Command, args []string) error {
+	if Objective != "" {
+		fmt.Println(Objective)
+	}
+
 	// Initialize the TUI with the flow session
 	p := tui.InitProgram(tui.EnterModel{
-		FlowSession: flow.InitSession(setFlowName(args)),
+		FlowSession: flow.InitSession(setFlowName(args), Objective),
 		InputLog:    CreateInputLog(),
 	})
 	if _, err := p.Run(); err != nil {
