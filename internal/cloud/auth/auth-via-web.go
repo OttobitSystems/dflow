@@ -21,7 +21,7 @@ var (
 	redirectedURI    = "http://localhost:5000/signedin"
 	signinAuth       = "NmwxcGM0bjEwMnRoazRvY3NmY2w0YXY3N2c6MWliaGVsMHAzdGQ3ZDUxMTMzZ2dmOG9panB2ZmE2ZzhpOWQ5dGJrODNiNGtzNnNoaTBlaw=="
 	cognitoURI       = "https://eu-south-1l5w4uze0p.auth.eu-south-1.amazoncognito.com/login?client_id=6l1pc4n102thk4ocsfcl4av77g&response_type=code&scope=aws.cognito.signin.user.admin+dflow-auth%2Fread&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fsignedin"
-	userLogedInCloud = false
+	UserLogedInCloud = false
 )
 
 func RefreshSession() string {
@@ -30,9 +30,7 @@ func RefreshSession() string {
 		return ""
 	}
 
-	userLogedInCloud = true
-
-	fmt.Println(accessToken)
+	UserLogedInCloud = true
 
 	_, err = refreshSession(*accessToken)
 	if err != nil {
@@ -44,7 +42,7 @@ func RefreshSession() string {
 }
 
 func LoginWeb() {
-	if userLogedInCloud {
+	if UserLogedInCloud {
 		fmt.Println("User already logged in.")
 		return
 	}
@@ -78,7 +76,7 @@ func LoginWeb() {
 	if err != nil {
 		panic(err)
 	}
-	userLogedInCloud = true
+	UserLogedInCloud = true
 }
 
 func signedInHandler(w http.ResponseWriter, r *http.Request) {
@@ -162,12 +160,6 @@ func refreshSession(token TokenResponse) (*TokenResponse, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
 		return nil, fmt.Errorf("reponse deserialization err: %w", err)
 	}
-
-	fmt.Println("at " + tokenResponse.AccessToken)
-	fmt.Println("ei " + string(tokenResponse.ExpiresIn))
-	fmt.Println("it " + tokenResponse.IDToken)
-	fmt.Println("rt " + tokenResponse.RefreshToken)
-	fmt.Println("tt " + tokenResponse.TokenType)
 
 	storeTokenInMemory(tokenResponse)
 

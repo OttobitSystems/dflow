@@ -4,8 +4,8 @@ package models
 import "time"
 
 type Flow struct {
-	Name      string `gorm:"primaryKey"`
-	CreatedAt time.Time
+	Name      string    `json:"Name" gorm:"primaryKey"`
+	CreatedAt time.Time `json:"CreatedAt"`
 
 	Sessions []Session `gorm:"foreignKey:FlowID"`
 	Logs     []Log     `gorm:"foreignKey:FlowID"`

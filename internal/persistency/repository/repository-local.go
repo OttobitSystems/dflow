@@ -2,6 +2,7 @@
 package repository
 
 import (
+	"dflow/internal/cloud/auth"
 	"dflow/internal/persistency/models"
 	"fmt"
 	"time"
@@ -63,6 +64,11 @@ func CreateFlow(name string) (bool, error) {
 	}
 
 	status := DBInstance.Create(&newFlow)
+
+	if auth.UserLogedInCloud {
+		token := auth.RefreshSession()
+		persistData(token, []models.Flow{newFlow}, nil, nil)
+	}
 
 	return (status != nil), status.Error
 }
@@ -133,6 +139,11 @@ func NotifySessionEnd(InDatabaseID string, CompletedAt time.Time) error {
 
 	DBInstance.Model(&session).Where(`ID = "`+InDatabaseID+`"`).Update("CompletedAt", CompletedAt)
 
+	if auth.UserLogedInCloud {
+		token := auth.RefreshSession()
+		persistData(token, nil, []models.Session{session}, nil)
+	}
+
 	return nil
 }
 
@@ -162,6 +173,11 @@ func StoreLog(SessionID string, FlowID string, logText string) error {
 	}
 
 	DBInstance.Create(messageToLog)
+
+	if auth.UserLogedInCloud {
+		token := auth.RefreshSession()
+		persistData(token, nil, nil, []models.Log{messageToLog})
+	}
 
 	return nil
 }
