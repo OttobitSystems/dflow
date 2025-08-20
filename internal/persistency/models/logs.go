@@ -6,6 +6,7 @@ type Log struct {
 	ID        string    `json:"ID"`
 	TimeStamp time.Time `json:"TimeStamp"`
 	Log       string    `json:"Log"`
+	UserName  string    `json:"UserName"`
 
 	// === RELATIONS ===
 

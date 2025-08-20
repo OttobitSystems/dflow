@@ -10,7 +10,6 @@ import (
 var Config = &cobra.Command{
 	Use:   "config",
 	Short: "Manage your DevFlow configuration",
-	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
 var SetDefaultFlow = &cobra.Command{
@@ -19,5 +18,14 @@ var SetDefaultFlow = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		repository.UpdateDefaultFlowName(args[0])
+	},
+}
+
+var SetUserName = &cobra.Command{
+	Use:   "username <name>",
+	Short: "Sets application username",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		repository.UpdateUserName(args[0])
 	},
 }

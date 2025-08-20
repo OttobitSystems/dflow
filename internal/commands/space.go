@@ -11,7 +11,6 @@ import (
 var Space = &cobra.Command{
 	Use:   "space",
 	Short: "Manage your flow space",
-	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
 var SpaceJoin = &cobra.Command{

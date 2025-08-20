@@ -3,6 +3,7 @@ package tui
 
 import (
 	"dflow/internal/flow"
+	"dflow/internal/persistency/repository"
 	"fmt"
 	"time"
 
@@ -14,8 +15,8 @@ import (
 var (
 	footerStyle           = lipgloss.NewStyle().Background(lipgloss.Color("#000000")).Width(100)
 	footerLeftContainer   = lipgloss.NewStyle().Background(lipgloss.Color("#7D56F4")).Width(33).Align(lipgloss.Left).Foreground(lipgloss.Color("#FAFAFA"))
-	footerCenterContainer = lipgloss.NewStyle().Background(lipgloss.Color("#3C3C3C")).Width(13).Align(lipgloss.Center)
-	footerRightContainer  = lipgloss.NewStyle().Background(lipgloss.Color("#D75FEE")).Width(54).Align(lipgloss.Right).Foreground(lipgloss.Color("#FAFAFA"))
+	footerCenterContainer = lipgloss.NewStyle().Background(lipgloss.Color("#3C3C3C")).Width(0).Align(lipgloss.Center)
+	footerRightContainer  = lipgloss.NewStyle().Background(lipgloss.Color("#D75FEE")).Width(67).Align(lipgloss.Right).Foreground(lipgloss.Color("#FAFAFA"))
 )
 
 var (
@@ -70,10 +71,9 @@ func (model EnterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (model EnterModel) View() string {
 	var view string
 
-	view += "Welcome into your flow!\n"
+	view += fmt.Sprintf("Hi %s, welcome into your flow!\n", repository.ApplicationConfiguration.Username)
 
 	view += "Press `Ctrl+c` to exit\n"
-	view += "Enjoy!\n\n"
 
 	view += lipgloss.JoinHorizontal(lipgloss.Top, RenderLeftContainer(model), RenderRightContainer(model))
 
@@ -113,9 +113,9 @@ func RenderRightContainer(model EnterModel) string {
 func RenderFooter(model EnterModel) string {
 	var view string
 
-	leftInfo := fmt.Sprintf("%s > %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
-	centerInfo := ""
-	rightInfo := fmt.Sprintf("Duration: %s | %s", model.FlowSession.DurationString(), model.FlowSession.Objective)
+	leftInfo := fmt.Sprintf("%s > Flow: %s", time.Now().Format("15:04:05"), model.FlowSession.FlowName)
+	centerInfo := "" // useless
+	rightInfo := fmt.Sprintf("Duration: %s | Objective: %s", model.FlowSession.DurationString(), model.FlowSession.Objective)
 
 	spacing := "\n\n\n\n\n"
 	footerRow := lipgloss.JoinHorizontal(lipgloss.Left, footerLeftContainer.Render(leftInfo), footerCenterContainer.Render(centerInfo), footerRightContainer.Render(rightInfo))

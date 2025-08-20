@@ -5,6 +5,7 @@ import (
 	"dflow/internal/cloud/auth"
 	"dflow/internal/persistency/models"
 	"fmt"
+	"os/user"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,6 +24,9 @@ var (
 const SQLCONNECTIONSTRING = "dflow.db?cache=shared&foreign_keys=1"
 
 func InitDatabase() (bool, error) {
+	currentUser, _ := user.Current()
+	ApplicationConfiguration.Username = currentUser.Username
+
 	var err error
 	result := false
 	DBInstance, err = gorm.Open(sqlite.Open(SQLCONNECTIONSTRING), &gorm.Config{})
@@ -61,6 +65,7 @@ func CreateFlow(name string) (bool, error) {
 	newFlow := models.Flow{
 		Name:      name,
 		CreatedAt: time.Now().UTC(),
+		UserName:  ApplicationConfiguration.Username,
 	}
 
 	status := DBInstance.Create(&newFlow)
@@ -89,8 +94,9 @@ func GetFlowsAndSessions() []models.Flow {
 
 func InitSession(flowName string) (string, error) {
 	newSection := models.Session{
-		ID:     uuid.New().String(),
-		FlowID: flowName,
+		ID:       uuid.New().String(),
+		FlowID:   flowName,
+		UserName: ApplicationConfiguration.Username,
 	}
 
 	var flows []models.Flow
@@ -106,10 +112,10 @@ func InitSession(flowName string) (string, error) {
 	return newSection.ID, nil
 }
 
-func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
+func NotifySessionStarted(SessionID string, StartedAt time.Time, Objective string) error {
 	var sessions []models.Session
 
-	_ = DBInstance.First(&sessions, `ID = "`+InDatabaseID+`"`)
+	_ = DBInstance.First(&sessions, `ID = "`+SessionID+`"`)
 
 	if len(sessions) == 0 {
 		return fmt.Errorf("session id not found")
@@ -117,9 +123,8 @@ func NotifySessionStarted(InDatabaseID string, StartedAt time.Time) error {
 
 	session := sessions[0]
 
-	session.StartedAt = StartedAt
-
-	DBInstance.Model(&session).Where(`ID = "`+InDatabaseID+`"`).Update("StartedAt", StartedAt)
+	DBInstance.Model(&session).Where(`ID = "`+SessionID+`"`).Update("StartedAt", StartedAt)
+	DBInstance.Model(&session).Where(`ID = "`+SessionID+`"`).Update("Objective", Objective)
 
 	return nil
 }
@@ -141,6 +146,7 @@ func NotifySessionEnd(InDatabaseID string, CompletedAt time.Time) error {
 
 	if auth.UserLogedInCloud {
 		token := auth.RefreshSession()
+		session.UserName = ApplicationConfiguration.Username
 		persistData(token, nil, []models.Session{session}, nil)
 	}
 
@@ -170,6 +176,7 @@ func StoreLog(SessionID string, FlowID string, logText string) error {
 		SessionID: SessionID,
 		TimeStamp: time.Now(),
 		Log:       logText,
+		UserName:  ApplicationConfiguration.Username,
 	}
 
 	DBInstance.Create(messageToLog)
@@ -195,4 +202,9 @@ func UpdateClientID(ClientID string) {
 func UpdateSpaceID(SpaceID string) {
 	var configurations []models.ApplicationConfiguration
 	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("joined_space", SpaceID)
+}
+
+func UpdateUserName(User string) {
+	var configurations []models.ApplicationConfiguration
+	DBInstance.Model(&configurations).Where(`default_flow = "`+ApplicationConfiguration.DefaultFlow+`"`).Update("username", User)
 }

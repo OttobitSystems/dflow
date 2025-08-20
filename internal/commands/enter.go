@@ -32,23 +32,21 @@ var Enter = &cobra.Command{
 		}
 		return nil
 	},
-	RunE: ExecuteEnter,
-}
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if Objective != "" {
+			fmt.Println(Objective)
+		}
 
-func ExecuteEnter(cmd *cobra.Command, args []string) error {
-	if Objective != "" {
-		fmt.Println(Objective)
-	}
+		p := tui.InitProgram(tui.EnterModel{
+			FlowSession: flow.InitSession(setFlowName(args), Objective),
+			InputLog:    CreateInputLog(),
+		})
 
-	// Initialize the TUI with the flow session
-	p := tui.InitProgram(tui.EnterModel{
-		FlowSession: flow.InitSession(setFlowName(args), Objective),
-		InputLog:    CreateInputLog(),
-	})
-	if _, err := p.Run(); err != nil {
-		return errors.New("unable to initialize the TUI")
-	}
-	return nil
+		if _, err := p.Run(); err != nil {
+			return errors.New("unable to initialize the TUI")
+		}
+		return nil
+	},
 }
 
 func CreateInputLog() textinput.Model {

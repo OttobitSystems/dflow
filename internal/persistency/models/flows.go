@@ -6,7 +6,8 @@ import "time"
 type Flow struct {
 	Name      string    `json:"Name" gorm:"primaryKey"`
 	CreatedAt time.Time `json:"CreatedAt"`
+	UserName  string    `json:"UserName"`
 
-	Sessions []Session `gorm:"foreignKey:FlowID"`
+	Sessions []Session ` gorm:"foreignKey:FlowID"`
 	Logs     []Log     `gorm:"foreignKey:FlowID"`
 }

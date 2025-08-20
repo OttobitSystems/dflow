@@ -120,6 +120,48 @@ func AddCloudSpace(cognitoToken string, SpaceID string, ClientID string) string 
 	return createSpaceResponse.Message
 }
 
+func RetriveRecapData(cognitoToken string, SpaceID string, ClientID string, FlowID string) *models.Flow {
+	apiGatewayURL := "https://h6v6viz9bh.execute-api.eu-south-1.amazonaws.com/recap-data"
+	requestParameters := retriveDataRequest{
+		ClientID: ClientID,
+		SpaceID:  SpaceID,
+		FlowID:   FlowID,
+	}
+
+	requestBody, _ := json.Marshal(requestParameters)
+
+	req, err := http.NewRequest("GET", apiGatewayURL, bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+		panic(err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+cognitoToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("error on request: %v", err)
+		panic(err)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("error reading body: %v", err)
+		panic(err)
+	}
+
+	var flowResponse retriveDataResponse
+	err = json.Unmarshal(body, &flowResponse)
+	if err != nil {
+		log.Fatalf("error parsing body: %v", err)
+		panic(err)
+	}
+
+	return &flowResponse.Flows
+}
+
 type persistDataBody struct {
 	ClientID string           `json:"ClientID"`
 	SpaceID  string           `json:"SpaceID"`
@@ -144,4 +186,14 @@ type createSpace struct {
 
 type createSpaceResponse struct {
 	Message string
+}
+
+type retriveDataRequest struct {
+	ClientID string `json:"ClientID"`
+	SpaceID  string `json:"SpaceID"`
+	FlowID   string `json:"FlowID"`
+}
+
+type retriveDataResponse struct {
+	Flows models.Flow
 }

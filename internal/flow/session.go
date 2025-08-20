@@ -36,7 +36,7 @@ func (s *Session) Start() {
 	}
 	s.StartedAt = time.Now()
 
-	repository.NotifySessionStarted(s.InDatabaseID, s.StartedAt)
+	repository.NotifySessionStarted(s.InDatabaseID, s.StartedAt, s.Objective)
 }
 
 // End marks the session as ended by setting EndedAt to the current time.

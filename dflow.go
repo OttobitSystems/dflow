@@ -18,8 +18,10 @@ func init() {
 	commands.Enter.Flags().StringVarP(&commands.Objective, "objective", "o", "It's a good day today", "Flow objective")
 
 	commands.Config.AddCommand(commands.SetDefaultFlow)
+	commands.Config.AddCommand(commands.SetUserName)
 	commands.Space.AddCommand(commands.SpaceJoin)
 	commands.Space.AddCommand(commands.CreateSpace)
+	commands.Space.AddCommand(commands.SpaceRecap)
 
 	// Add subcommands to the root command
 	rootCmd.AddCommand(
