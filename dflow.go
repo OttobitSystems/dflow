@@ -19,9 +19,15 @@ func init() {
 
 	commands.Config.AddCommand(commands.SetDefaultFlow)
 	commands.Config.AddCommand(commands.SetUserName)
+	commands.Config.AddCommand(commands.SetCustomerCode)
+	commands.Config.AddCommand(commands.Get)
+
 	commands.Space.AddCommand(commands.SpaceJoin)
 	commands.Space.AddCommand(commands.CreateSpace)
 	commands.Space.AddCommand(commands.SpaceRecap)
+	commands.Space.AddCommand(commands.ListSpaces)
+
+	commands.Auth.AddCommand(commands.AuthReset)
 
 	// Add subcommands to the root command
 	rootCmd.AddCommand(

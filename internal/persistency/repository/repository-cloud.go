@@ -162,6 +162,46 @@ func RetriveRecapData(cognitoToken string, SpaceID string, ClientID string, Flow
 	return &flowResponse.Flows
 }
 
+func ListSpaces(cognitoToken string, ClientID string) *[]string {
+	apiGatewayURL := "https://h6v6viz9bh.execute-api.eu-south-1.amazonaws.com/list-spaces"
+	requestParameters := listSpacesRequest{
+		ClientID: ClientID,
+	}
+
+	requestBody, _ := json.Marshal(requestParameters)
+
+	req, err := http.NewRequest("GET", apiGatewayURL, bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+		panic(err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+cognitoToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("error on request: %v", err)
+		panic(err)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("error reading body: %v", err)
+		panic(err)
+	}
+
+	var response listSpacesResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Fatalf("error parsing body: %v", err)
+		panic(err)
+	}
+
+	return &response.Spaces
+}
+
 type persistDataBody struct {
 	ClientID string           `json:"ClientID"`
 	SpaceID  string           `json:"SpaceID"`
@@ -196,4 +236,12 @@ type retriveDataRequest struct {
 
 type retriveDataResponse struct {
 	Flows models.Flow
+}
+
+type listSpacesRequest struct {
+	ClientID string
+}
+
+type listSpacesResponse struct {
+	Spaces []string
 }

@@ -14,18 +14,18 @@ var Space = &cobra.Command{
 }
 
 var SpaceJoin = &cobra.Command{
-	Use:   "join <client_id> <space_name>",
+	Use:   "join <space_name>",
 	Short: "Joins cloud space",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		clientID := args[0]
-		spaceID := args[1]
+		clientID := repository.ApplicationConfiguration.ClientID
+		spaceID := args[0]
 
 		token := auth.RefreshSession()
 		joinResponse := repository.JoinCloudSpace(token, spaceID, clientID)
 		if joinResponse {
-			repository.UpdateClientID(clientID)
 			repository.UpdateSpaceID(spaceID)
+			fmt.Println("Joined")
 			return
 		}
 		fmt.Println("Space id not found in cloud")
@@ -33,12 +33,12 @@ var SpaceJoin = &cobra.Command{
 }
 
 var CreateSpace = &cobra.Command{
-	Use:   "create <client_id> <space_name>",
+	Use:   "create <space_name>",
 	Short: "Creates cloud space",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		clientID := args[0]
-		spaceID := args[1]
+		clientID := repository.ApplicationConfiguration.ClientID
+		spaceID := args[0]
 
 		token := auth.RefreshSession()
 		creationResponse := repository.AddCloudSpace(token, spaceID, clientID)
@@ -46,9 +46,14 @@ var CreateSpace = &cobra.Command{
 	},
 }
 
-var RecapSpace = &cobra.Command{
-	Use:   "recap",
-	Short: "Makes recap of work from cloud",
+var ListSpaces = &cobra.Command{
+	Use:   "list",
+	Short: "Lists spaces from cloud",
 	Run: func(cmd *cobra.Command, args []string) {
+		token := auth.RefreshSession()
+		response := repository.ListSpaces(token, repository.ApplicationConfiguration.ClientID)
+		for _, item := range *response {
+			fmt.Printf("> %s\n", item)
+		}
 	},
 }

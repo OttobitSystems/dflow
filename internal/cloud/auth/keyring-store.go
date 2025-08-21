@@ -73,3 +73,7 @@ func retriveTokenFromMemory() (*TokenResponse, error) {
 func clearTokenInMemory() {
 	keyring.DeleteAll(serviceName)
 }
+
+func Reset() {
+	clearTokenInMemory()
+}

@@ -16,11 +16,11 @@ import (
 var (
 	authCodeChan     = make(chan string)
 	serviceName      = "dflow"
-	clientID         = "6l1pc4n102thk4ocsfcl4av77g"
-	cognitoDomain    = "https://eu-south-1l5w4uze0p.auth.eu-south-1.amazoncognito.com"
+	clientID         = "1cgavt8chfg8r7c5qeahep32dg" //"6l1pc4n102thk4ocsfcl4av77g"
+	cognitoDomain    = "https://eu-south-1ktzlsffkv.auth.eu-south-1.amazoncognito.com"
 	redirectedURI    = "http://localhost:5000/signedin"
-	signinAuth       = "NmwxcGM0bjEwMnRoazRvY3NmY2w0YXY3N2c6MWliaGVsMHAzdGQ3ZDUxMTMzZ2dmOG9panB2ZmE2ZzhpOWQ5dGJrODNiNGtzNnNoaTBlaw=="
-	cognitoURI       = "https://eu-south-1l5w4uze0p.auth.eu-south-1.amazoncognito.com/login?client_id=6l1pc4n102thk4ocsfcl4av77g&response_type=code&scope=aws.cognito.signin.user.admin+dflow-auth%2Fread&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fsignedin"
+	signinAuth       = "MWNnYXZ0OGNoZmc4cjdjNXFlYWhlcDMyZGc6NDMxdmYxZzU3amI3bjQybmM1aHRhajVoZDZxZ2J1OTE4dDljZmVrZDd2dmxvczZodjFh" //"NmwxcGM0bjEwMnRoazRvY3NmY2w0YXY3N2c6MWliaGVsMHAzdGQ3ZDUxMTMzZ2dmOG9panB2ZmE2ZzhpOWQ5dGJrODNiNGtzNnNoaTBlaw=="
+	cognitoURI       = "https://eu-south-1ktzlsffkv.auth.eu-south-1.amazoncognito.com/login?client_id=1cgavt8chfg8r7c5qeahep32dg&response_type=code&scope=email+openid+phone&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fsignedin"
 	UserLogedInCloud = false
 )
 
